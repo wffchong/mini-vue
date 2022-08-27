@@ -9,7 +9,7 @@ class ReactiveEffect {
 
     run() {
         activeEffect = this
-        this._fn()
+        return this._fn()
     }
 }
 
@@ -45,4 +45,6 @@ export function effect(fn) {
     const _effect = new ReactiveEffect(fn)
     // 开始就自动执行一次
     _effect.run()
+    // 这里需要返回当前的函数，所以需要处理下this
+    return _effect.run.bind(_effect)
 }
