@@ -5,6 +5,8 @@ class ReactiveEffect {
 
     constructor(fn, public scheduler?) {
         this._fn = fn
+        // 把scheduler 绑定在this当中，方便track中调用
+        this.scheduler = scheduler
     }
 
     run() {
