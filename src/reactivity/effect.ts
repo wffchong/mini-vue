@@ -3,12 +3,13 @@ let activeEffect
 class ReactiveEffect {
     private _fn: any
 
-    constructor(fn) {
+    constructor(fn, public scheduler?) {
         this._fn = fn
     }
 
     run() {
         activeEffect = this
+        // 把函数执行结果返回
         return this._fn()
     }
 }
@@ -37,12 +38,17 @@ export function trigger(target, key) {
     const depMap = targetMap.get(target)
     const dep = depMap.get(key)
     for (const effect of dep) {
-        effect.run()
+        if (effect.scheduler) {
+            effect.scheduler()
+        } else {
+            effect.run()
+        }
     }
 }
 
-export function effect(fn) {
-    const _effect = new ReactiveEffect(fn)
+export function effect(fn, options: any = {}) {
+    const scheduler = options.scheduler
+    const _effect = new ReactiveEffect(fn, scheduler)
     // 开始就自动执行一次
     _effect.run()
     // 这里需要返回当前的函数，所以需要处理下this

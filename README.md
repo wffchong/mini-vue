@@ -38,3 +38,38 @@ module.exports = {
 
 * effect(fn) --> function (runner) --> fn --> return
 * 调用effect会返回一个函数runner， 调用runner会再次执行fn，调用fn， fn会返回一个返回值
+
+## 四：实现effect的scheduler功能
+
+1. 通过effect的第二个参数给定一个scheduler的fn
+2. effect第一次执行的时候还是会执行第一个回调
+3. 当响应式对象更改的时候会执行传入的scheduler的fn，而不是第一个回调
+4. 当再次执行runner的时候，会执行第一个回调
+
+例子：
+
+```js
+<script setup>
+import { reactive } from 'vue'
+const obj = reactive({ foo: 1 })
+
+const test = () => {
+    // 当点击按钮的时候这里是不会再继续打印的，只有初始化的时候会打印，或者再次调用test的时候会重新打印
+    console.log(obj.foo)
+    return 1
+}
+test()
+
+const handleClick = () => {
+    obj.foo++
+}
+</script>
+
+<template>
+    <div class="dv">
+        <button @click="handleClick">增加</button>
+        <span>{{ obj.foo }}</span>
+        <button @click="test()">调用test</button>
+    </div>
+</template>
+```
