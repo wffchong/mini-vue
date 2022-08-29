@@ -73,3 +73,10 @@ const handleClick = () => {
     </div>
 </template>
 ```
+
+## 五：实现effect的stop功能
+
+* stop的作用是 停止数据响应，只有手动触发run函数，数据才能继续变成响应式的数据
+主要是当调用stop的时候需要清除掉当前effect的所有dep，所以需要反向收集dep到activeEffect上，然后调用stop的时候去删除所有的dep
+
+* onStop和scheduler差不多，就是在调用stop的时候如果传了onStop就自动回调onStop
